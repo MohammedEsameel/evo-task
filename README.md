@@ -7,7 +7,7 @@ First: You must execute the prepare.sh file by using "./prepare.sh" , this scrip
         - Ansible Installation
         
 Second: Find Bash Script “project.sh” 
-  - Execute the script with arguments [all | kafka | kub | app]
+  - Execute the script with arguments `[all | kafka | kub | app]`
   - You must execute the script with argument that you need to install
   - Ex: ./project.sh all
   - The example above will starting creating vm and their provisioning and staring with 
