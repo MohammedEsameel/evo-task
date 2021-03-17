@@ -1,0 +1,124 @@
+- name: Include vars
+  include_vars: ../../../vars/app_vars.yml
+
+- name: creating a docker repository
+  yum_repository:
+       description: repo for docker
+       name: docker-ce
+       baseurl: https://download.docker.com/linux/centos/7/x86_64/stable/
+       gpgcheck: no
+
+- name: Check if EPEL repo is already configured.
+  stat: path={{ epel_repofile_path }}
+  register: epel_repofile_result
+ 
+- name: Install EPEL repo.
+  yum:
+    name: "{{ epel_repo_url }}"
+    state: present
+  register: result
+  when: not epel_repofile_result.stat.exists
+ 
+- name: Import EPEL GPG key.
+  rpm_key:
+    key: "{{ epel_repo_gpg_key_url }}"
+    state: present
+  when: not epel_repofile_result.stat.exists
+
+- name: Install python 
+  yum:
+    name:
+      - python
+      - libselinux-python
+      - python-docker
+    state: present
+
+- name: Installing Docker
+  package:
+       name: docker-ce
+       state: present
+
+- name: Starting Docker Services
+  service:
+    name: docker
+    state: started
+
+- name: Create Producer Build Directory
+  file:
+    path: /opt/producer
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Copy Producer Build Files
+  copy:
+    src: "{{ item  }}"
+    dest: /opt/producer/
+    owner: root
+    group: root
+    mode: '0644'
+  with_fileglob: producer/*
+
+- name: Create Consumer Build Directory
+  file:
+    path: /opt/consumer
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Copy Consumer Build Files
+  copy:
+    src: "{{ item  }}"
+    dest: /opt/consumer/
+    owner: root
+    group: root
+    mode: '0644'
+  with_fileglob: consumer/*
+
+- name: Build Producer Image 
+  docker_image:
+    name: python-producer:latest
+    build:
+      path: /opt/producer/
+    source: build
+
+- name: Build Consumer Image
+  docker_image:
+    name: python-consumer:latest
+    build:
+      path: /opt/consumer/
+    source: build
+
+- name: Run Producer
+  remote_user: root
+  shell: "docker run -d --name producer --restart always  python-producer:latest"
+
+- name: Run Producer
+  remote_user: root
+  shell: "docker run -d --name consumer --restart always  python-consumer:latest"
+
+- name: Create Prometheus Directory
+  file:
+    path: /etc/prometheus
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Transfer prometheus.yml
+  ansible.builtin.copy:
+    src: prometheus.yml
+    dest: /etc/prometheus/prometheus.yml
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Run Prometheus
+  remote_user: root
+  shell: "docker run -d --name prometheus --restart always -v /etc/prometheus:/etc/prometheus -p 9090:9090 prom/prometheus"
+
+- name: Run Grafana
+  remote_user: root
+  shell: "docker run -d --name grafana --restart always -p 3000:3000 grafana/grafana"

@@ -1,0 +1,123 @@
+- name: Include vars
+  include_vars: ../../../vars/kafka_servers.yml
+
+- name: create kafka group 
+  group: name=kafka state=present
+ 
+- name: create kafka user
+  user: name=kafka group=kafka
+
+- name: Kafka download file
+  get_url:
+    url: https://downloads.apache.org/kafka/2.7.0/kafka-2.7.0-src.tgz
+    dest: /opt
+
+- name: creating a docker repository
+  yum_repository:
+       description: repo for docker
+       name: docker-ce
+       baseurl: https://download.docker.com/linux/centos/7/x86_64/stable/
+       gpgcheck: no
+
+- name: 1.Check if EPEL repo is already configured.
+  stat: path={{ epel_repofile_path }}
+  register: epel_repofile_result
+ 
+- name: 2.Install EPEL repo.
+  yum:
+    name: "{{ epel_repo_url }}"
+    state: present
+  register: result
+  when: not epel_repofile_result.stat.exists
+ 
+- name: 3.Import EPEL GPG key.
+  rpm_key:
+    key: "{{ epel_repo_gpg_key_url }}"
+    state: present
+  when: not epel_repofile_result.stat.exists
+
+- name: Install python 
+  yum:
+    name:
+      - python
+      - libselinux-python
+    state: present
+
+- name: installing docker
+  package:
+       name: docker-ce
+       state: present
+
+- name: starting docker services
+  service:
+    name: docker
+    state: started
+
+- name: Unpack Kafka archive
+  unarchive:
+    src: "{{ package_download_path }}/{{ kafka_package_name }}"
+    dest: "{{ kafka.installation_path }}"
+    copy: no
+    group: root
+    owner: root
+
+- name: Rename Directory
+  command: "mv {{ kafka_application_path }} {{ kafka_path }}" 
+
+- name: delete package downloaded if needed
+  file: path={{ package_download_path }}/{{ kafka_package_name }} state=absent
+
+- name: set kafka data dir
+  file: path={{ kafka.configuration.data_dir }} state=directory owner=kafka group=kafka
+
+- name: set kafka loggers dir
+  file: path={{ kafka.configuration.log_path }} state=directory owner=kafka group=kafka
+
+- name: set kafka log topic dirs
+  file: path={{ kafka.configuration.log_dirs }} state=directory owner=kafka group=kafka
+
+- name: Create Kafka systemd
+  template: src=kafka.systemd.j2 dest=/etc/systemd/system/kafka.service owner=root group=root mode=644 force=yes
+
+- name: set kafka configuration
+  template: src=templates/kafka.configuration.j2 dest=/etc/kafka/config/server.properties force=yes
+
+- name: reload systemd daemon
+  remote_user: root
+  shell: "systemctl daemon-reload"
+
+- name: Build kafka 
+  remote_user: root
+  shell: ./gradlew jar -PscalaVersion=2.13.3
+  args:
+    chdir: /etc/kafka
+    executable: /bin/bash
+
+- name: restart kafka
+  service: name=kafka state=restarted enabled=yes
+
+- name: Check zookeeper Status
+  remote_user: root
+  shell: "systemctl status zookeeper.service"
+
+- name: Check kafka Status
+  remote_user: root
+  shell: "systemctl status kafka.service"
+
+- name: Run Kafka Exporter
+  remote_user: root
+  shell: "docker run -d --name kafka-exporter --restart always -p 9308:9308 danielqsj/kafka-exporter --kafka.server=192.168.1.200:9092"
+
+- name: create input topic
+  remote_user: root
+  shell: bin/kafka-topics.sh --create --zookeeper localhost:2181/kafka --replication-factor 1 --partitions 1 --topic input
+  args:
+    chdir: /etc/kafka
+    executable: /bin/bash
+
+- name: create output topic
+  remote_user: root
+  shell: bin/kafka-topics.sh --create --zookeeper localhost:2181/kafka --replication-factor 1 --partitions 1 --topic output
+  args:
+    chdir: /etc/kafka
+    executable: /bin/bash

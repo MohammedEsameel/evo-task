@@ -1,0 +1,55 @@
+- name:
+  include_vars: ../../../vars/kafka_servers.yml
+
+- name: create zookeeper group 
+  group: name=zookeeper state=present
+ 
+- name: create zookeeper user
+  user: name=zookeeper group=zookeeper
+
+- name: Download Zookeeper
+  get_url: 
+    url: https://ftp.itu.edu.tr/Mirror/Apache/zookeeper/zookeeper-3.6.2/apache-zookeeper-3.6.2-bin.tar.gz
+    dest: /opt
+
+- name: check zookeeper package
+  stat: path=/opt/apache-zookeeper-3.6.2-bin.tar.gz
+  register: zk_package_exists
+
+- name: Unpack Zookeeper archive
+  unarchive:
+    src: /opt/apache-zookeeper-3.6.2-bin.tar.gz
+    dest: /opt/
+    copy: no
+    group: root
+    owner: root
+
+#- name: delete package downloaded if needed
+#  file: path={{ package_download_path }}/{{ zk_package_name }} state=absent
+#  when: force_cleanup is defined and force_cleanup == "True"
+
+- name: set zookeeper data dir
+  file: path={{ zookeeper.configuration.data_dir }} state=directory owner=zookeeper group=zookeeper
+
+- name: set zookeeper log dir
+  file: path={{ zookeeper.configuration.log_path }} state=directory owner=zookeeper group=zookeeper
+
+- name: set zookeeper configuration
+  template: src=templates/zookeeper.configuration.j2 dest={{ zk_application_path }}/conf/zoo.cfg force=yes
+
+- name: set zookeeper data dir
+  file: path={{ zookeeper.configuration.data_dir }} state=directory owner=zookeeper group=zookeeper
+
+- name: start zookeeper
+  template: src=templates/zookeeper.systemd.j2 dest=/etc/systemd/system/zookeeper.service owner=root group=root mode=644 force=yes
+
+- name: reload systemd daemon 
+  shell: "systemctl daemon-reload"
+
+- name: restart zookeeper
+  service:
+    name: zookeeper
+    state: restarted      
+
+
+

@@ -1,0 +1,12 @@
+[Unit]
+Description=Apache Kafka server (broker)
+
+[Service]
+User=root
+Group=root
+ExecStart={{ kafka_path }}/bin/kafka-server-start.sh  {{ kafka_path }}/config/server.properties
+ExecStop={{ kafka_path }}/bin/kafka-server-stop.sh
+
+[Install]
+WantedBy=multi-user.target
+

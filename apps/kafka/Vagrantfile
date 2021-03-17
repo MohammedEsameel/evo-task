@@ -1,0 +1,23 @@
+IMAGE_NAME = "centos/7"
+Vagrant.configure("2") do |config|
+    config.vm.synced_folder ".", "/vagrant", disabled: true
+    config.ssh.insert_key = false
+
+    config.vm.provider "virtualbox" do |v|
+        v.memory = 8192
+        v.cpus = 4
+    end
+
+    config.vm.define "kafka1" do |master|
+        master.vm.box = IMAGE_NAME
+        master.vm.network "public_network", ip: "192.168.1.200"
+        master.vm.hostname = "kafka1"
+        master.vm.provision "ansible" do |ansible|
+            ansible.playbook = "kafka.yml"
+            ansible.extra_vars = {
+                node_ip: "192.168.1.200",
+            }
+        end
+   end
+end 
+

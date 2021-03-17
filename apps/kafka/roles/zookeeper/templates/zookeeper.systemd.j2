@@ -1,0 +1,14 @@
+[Unit]
+Description=Zookeeper
+Before=
+After=network.target
+
+[Service]
+Type=forking
+User=zookeeper
+Environment=ZOO_LOG_DIR=/var/log/zookeeper JAVA_HOME=/usr/bin/java CHDIR=/var/zookeeper
+ExecStart=/opt/apache-zookeeper-3.6.2-bin/bin/zkServer.sh start
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
