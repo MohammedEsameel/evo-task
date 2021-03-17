@@ -18,5 +18,15 @@ Third: Find Bash Script "remove.sh"
    - It's the same work of project.sh but it will remove the args that will take instead of installing it. 
     
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Commands:
+#Commands
 git clone https://github.com/MohammedEsameel/evo-task
+cd evo-task
+
+#install VBox , Vagrant & Ansible
+./prepare.sh 
+
+#install all project components 
+./project.sh all 
+
+#remove project components
+./remove.sh all
