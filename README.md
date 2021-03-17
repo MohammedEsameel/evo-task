@@ -19,6 +19,7 @@ Third: Find Bash Script "remove.sh"
     
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #Commands
+#clone project from repo 
 
 `git clone https://github.com/MohammedEsameel/evo-task`
 
