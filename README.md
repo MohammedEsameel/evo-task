@@ -1,11 +1,11 @@
 # evo-task
 `First:` You must execute the prepare.sh file by using "./prepare.sh" , this scripts will install and prepare Host with this items:
 
-        * Epel-Release Repo installation
-        * VirtualBox Required Packages installation
-        * VirtualBox Installation
-        * Vagrant Installation 
-        * Ansible Installation
+- Epel-Release Repo installation
+- VirtualBox Required Packages installation
+- VirtualBox Installation
+- Vagrant Installation 
+- Ansible Installation
         
 `Second:` Find Bash Script “project.sh” 
 
