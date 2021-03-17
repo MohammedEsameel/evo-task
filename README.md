@@ -19,14 +19,13 @@ Third: Find Bash Script "remove.sh"
     
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #Commands
-git clone https://github.com/MohammedEsameel/evo-task
-cd evo-task
+`git clone https://github.com/MohammedEsameel/evo-task
+cd evo-task`
 
 #install VBox , Vagrant & Ansible
-./prepare.sh 
-
+`./prepare.sh`
 #install all project components 
-./project.sh all 
+`./project.sh all` 
 
 #remove project components
-./remove.sh all
+`./remove.sh all`
