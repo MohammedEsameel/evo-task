@@ -13,29 +13,26 @@ then
 EOF
 exit 1
 fi
-
+export path=$(echo "`pwd`")
 if [ $1 = "all" ]
 then
 for j in $(eval echo $1)
         do echo "Starting installation of $j servers"
-        cd apps/kafka
+        cd $path/apps/kafka
         vagrant up
         sleep 3
-        cd apps/kub
+        cd $path/apps/kub
         vagrant up
         sleep 3
-        cd apps/app
-        vagrant up
-        echo "Installation of $j hosts Completed Succussfually"       
+        cd $path/apps/app
+        vagrant up      
 done
 elif [ $1 = "kafka" ] || [ $1 = "kub" ] || [ $1 = "app" ]
 then 
    for i in $(eval echo $1)
         do echo "Starting installation of $i"
-        cd apps/$i
-        vagrant up
-        sleep 3
-        echo "Installation of $i host Completed Succussfually"       
+        cd $path/apps/$i
+        vagrant up   
 	done
 else
 echo "Sorry Your Input in undefined !!"
