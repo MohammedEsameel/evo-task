@@ -18,21 +18,21 @@
    - It's the same work of project.sh but it will remove the args that will take instead of installing it. 
     
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-#Commands
-#clone project from repo 
+`Commands`
+1. Clone project from repo 
 
 `git clone https://github.com/MohammedEsameel/evo-task`
 
 `cd evo-task`
 
-#install VBox , Vagrant & Ansible
+2. Install VBox , Vagrant & Ansible
 
 `./prepare.sh`
 
-#install all project components
+3. Install all project components
 
 `./project.sh all` 
 
-#remove project components
+4. Remove project components
 
 `./remove.sh all`
