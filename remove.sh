@@ -26,7 +26,7 @@ for j in $(eval echo $1)
         sleep 3
         cd $path/apps/app
         vagrant destroy -f app
-        echo "Removing of $j hosts Completed Succussfually"       
+             
 done
 elif [ $1 = "kafka" ] || [ $1 = "kub" ] || [ $1 = "app" ]
 then 
@@ -34,8 +34,7 @@ then
         do echo "Starting removing of $i"
         cd $path/apps/$i
         vagrant destroy -f $i
-        sleep 3
-        echo "Removing of $i host Completed Succussfually"       
+            
 	done
 else
 echo "Sorry Your Input in undefined !!"
