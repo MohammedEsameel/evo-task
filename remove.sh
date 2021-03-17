@@ -18,13 +18,13 @@ if [ $1 = "all" ]
 then
 for j in $(eval echo $1)
         do echo "Starting installation of $j servers"
-        cd ~/apps/kafka
+        cd apps/kafka
         vagrant destroy -f kafka1
         sleep 3
-        cd ~/apps/kub
+        cd apps/kub
         vagrant destroy -f k8s-master node-1 node-2
         sleep 3
-        cd ~/apps/app
+        cd apps/app
         vagrant destroy -f app
         echo "Removing of $j hosts Completed Succussfually"       
 done
@@ -32,7 +32,7 @@ elif [ $1 = "kafka" ] || [ $1 = "kub" ] || [ $1 = "app" ]
 then 
    for i in $(eval echo $1)
         do echo "Starting removing of $i"
-        cd ~/apps/$i
+        cd apps/$i
         vagrant destroy -f $i
         sleep 3
         echo "Removing of $i host Completed Succussfually"       

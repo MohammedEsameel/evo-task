@@ -18,13 +18,13 @@ if [ $1 = "all" ]
 then
 for j in $(eval echo $1)
         do echo "Starting installation of $j servers"
-        cd ~/apps/kafka
+        cd apps/kafka
         vagrant up
         sleep 3
-        cd ~/apps/kub
+        cd apps/kub
         vagrant up
         sleep 3
-        cd ~/apps/app
+        cd apps/app
         vagrant up
         echo "Installation of $j hosts Completed Succussfually"       
 done
@@ -32,7 +32,7 @@ elif [ $1 = "kafka" ] || [ $1 = "kub" ] || [ $1 = "app" ]
 then 
    for i in $(eval echo $1)
         do echo "Starting installation of $i"
-        cd ~/apps/$i
+        cd apps/$i
         vagrant up
         sleep 3
         echo "Installation of $i host Completed Succussfually"       
